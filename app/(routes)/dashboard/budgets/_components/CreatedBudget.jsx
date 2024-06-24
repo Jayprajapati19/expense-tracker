@@ -2,8 +2,10 @@
 import React, { useState } from 'react'
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -11,7 +13,10 @@ import {
 import EmojiPicker from 'emoji-picker-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { AwardIcon } from 'lucide-react'
+import { db } from '@/utils/dbConfig'
+import { Budgets } from '@/utils/schema'
+import { useUser } from '@clerk/nextjs'
+import { toast } from 'sonner'
 
 
 function CreatedBudget() {
@@ -23,8 +28,21 @@ function CreatedBudget() {
     const [name, setName] = useState();
     const [amount, setAmount] = useState();
 
+    const { user } = useUser();
+
     const onCreateBudget = async () => {
-        const result = await
+        const result = await db.insert(Budgets)
+            .values({
+                name: name,
+                amount: amount,
+                createdBy: user?.primaryEmailAddress.emailAddress,
+                icon: emojiIcon
+            }).returning({ insertId: Budgets.id })
+
+
+        if (result) {
+            toast(' New Budget created successfully! ✅')
+        }
     }
 
     return (
@@ -72,13 +90,19 @@ function CreatedBudget() {
                                         onChange={(e) => setAmount(e.target.value)}
                                     />
                                 </div>
-                                <Button
-                                    disabled={!(name && amount)}
-                                    onClick={() => onCreateBudget()}
-                                    className="mt-5 w-full">Create Budget</Button>
+
                             </div>
                         </DialogDescription>
                     </DialogHeader>
+                    <DialogFooter className="sm:justify-start">
+                        <DialogClose asChild>
+                            <Button
+                                disabled={!(name && amount)}
+                                onClick={() => onCreateBudget()}
+                                className="mt-5 w-full">Create Budget</Button>
+                        </DialogClose>
+                    </DialogFooter>
+
                 </DialogContent>
             </Dialog>
 
