@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import CreatedBudget from './CreatedBudget'
 import { db } from '@/utils/dbConfig'
 import { eq, getTableColumns, sql } from 'drizzle-orm'
@@ -6,8 +6,11 @@ import { Budgets, Expenses } from '@/utils/schema'
 
 function BudgetList() {
 
-    //  used to get budget list
+    useEffect(() => {
+        getBudgetList();
+    }, [])
 
+    //  used to get budget list
 
     const getBudgetList = async () => {
         const result = await db.select({
@@ -16,6 +19,8 @@ function BudgetList() {
             totalItem: sql`count(${Expenses.id})`.mapWith(Number)
         }).from(Budgets)
             .leftJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
+            .where(eq(Budgets.createdBy,))
+            // 2:2
             .groupBy(Budgets.id);
 
         console.log(result);
