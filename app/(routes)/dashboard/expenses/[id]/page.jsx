@@ -9,7 +9,7 @@ import AddExpenses from '../_components/AddExpenses';
 
 function ExpensesScreen({ params }) {
 
-    const user = useUser();
+    const { user } = useUser();
     const [budgetInfo, setBudgeetInfo] = useState();
 
 
@@ -24,8 +24,8 @@ function ExpensesScreen({ params }) {
             totalSpend: sql`sum(${Expenses.amount})`.mapWith(Number),
             totalItem: sql`count(${Expenses.id})`.mapWith(Number)
         }).from(Budgets)
-            .leftJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
-            .where(eq(Budgets.createdBy, user?.primaryEmailAddress?.emailAddress))
+            .leftJoin(Expenses, eq(Budgets.id, Expenses?.budgetId))
+            .where(eq(Budgets?.createdBy, user?.primaryEmailAddress?.emailAddress))
             .where(eq(Budgets.id, params.id))
             .groupBy(Budgets.id)
 
@@ -42,10 +42,8 @@ function ExpensesScreen({ params }) {
                     <div className='h-[150px] w-full bg-slate-300 rounded-lg animate-pulse'>
                     </div>}
 
-                <AddExpenses />
-
-
-
+                <AddExpenses budgetId={params.id}
+                    user={user} />
             </div>
         </div>
     )
