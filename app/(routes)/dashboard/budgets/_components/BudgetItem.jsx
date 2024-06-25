@@ -24,9 +24,7 @@ function BudgetItem({ budget }) {
                 </div>
                 <div className='w-full bg-slate-300 h-2 rounded-full'>
                     <div className='w-[40%] bg-primary h-2 rounded-full'>
-
                     </div>
-
                 </div>
             </div>
 

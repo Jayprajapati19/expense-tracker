@@ -42,7 +42,7 @@ function Sidenav() {
     }, [path])
 
     return (
-        <div className='h-screen p-5 border shadow-sm '>
+        <div className='h-screen p-5 border shadow-sm  animate-pulse'>
             <Image src={'/logo.svg'}
                 alt='logo'
                 width={225}
