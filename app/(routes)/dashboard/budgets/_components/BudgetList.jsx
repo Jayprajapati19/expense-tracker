@@ -21,6 +21,7 @@ function BudgetList() {
     //  used to get budget list
 
     const getBudgetList = async () => {
+
         const result = await db.select({
             ...getTableColumns(Budgets),
             totalSpend: sql`sum(${Expenses.amount})`.mapWith(Number),
