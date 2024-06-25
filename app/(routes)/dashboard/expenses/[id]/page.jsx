@@ -7,15 +7,33 @@ import React, { useEffect, useState } from 'react'
 import BudgetItem from '../../budgets/_components/BudgetItem';
 import AddExpenses from '../_components/AddExpenses';
 import ExpensesListTable from '../_components/ExpenseListTable';
+import { Button } from '@/components/ui/button';
+import { Trash } from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+
 
 function ExpensesScreen({ params }) {
 
     const { user } = useUser();
     const [budgetInfo, setBudgeetInfo] = useState();
     const [expensesList, setExpensesList] = useState([]);
+    const route = useRouter()
 
     useEffect(() => {
         user && getBudgetInfo()
+
 
     }, [user]);
 
@@ -45,12 +63,50 @@ function ExpensesScreen({ params }) {
             .where(eq(Expenses.budgetId, params.id))
             .orderBy(desc(Expenses.id));
         setExpensesList(result);
-        // console.log(result);
+        console.log(result);
+    }
+
+    // used to Delete Budget
+    const deleteBudget = async () => {
+        const deleteExpenseResult = await db.delete(Expenses)
+            .where(eq(Expenses.budgetId, params.id))
+            .returning();
+
+        if (deleteExpenseResult) {
+            const result = await db.delete(Budgets)
+                .where(eq(Budgets.id, params.id))
+                .returning();
+
+            console.log(result);
+        }
+        toast("Budget deleted successfully ✅")
+        route.replace('/dashboard/budgets')
     }
 
     return (
         <div className='p-10'>
-            <h2 className='text-2xl font-bold'>My Expenses</h2>
+            <h2 className='text-2xl font-bold flex justify-between items-center'>My Expenses
+
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button className='flex gap-2 ' variant="destructive"> <Trash /> Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your current budget along with expenses.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteBudget()}>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
+
+            </h2>
             <div className='grid grid-cols-1 md:grid-cols-2 mt-6 gap-5'>
                 {budgetInfo ? <BudgetItem
                     budget={budgetInfo}
