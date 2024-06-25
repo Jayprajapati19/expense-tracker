@@ -5,7 +5,7 @@ import { Budgets, Expenses } from '@/utils/schema';
 import React, { useState } from 'react'
 import { toast } from 'sonner';
 
-function AddExpenses({ budgetId, user }) {
+function AddExpenses({ budgetId, user, refreshData }) {
 
     const [name, setName] = useState()
     const [amount, setAmount] = useState()
@@ -20,6 +20,9 @@ function AddExpenses({ budgetId, user }) {
 
         console.log(result);
         if (result) {
+
+            refreshData()
+
             toast("New Expense Added successfully ✅")
         }
     }
@@ -29,7 +32,7 @@ function AddExpenses({ budgetId, user }) {
         <div className='border p-5 rounded-lg'>
             <h2 className='font-bold text-lg'>Add Expense</h2>
             <div className='mt-2'>
-                <h2 className='text-black font-medium  my-1 '>Expense Name</h2>
+                <h2 className='text-black font-medium  my-1'>Expense Name</h2>
                 <Input placeholder="e.g. Bedroom decor"
                     onChange={(e) => setName(e.target.value)}
                 />
@@ -42,7 +45,7 @@ function AddExpenses({ budgetId, user }) {
             </div>
             <Button disabled={!(name && amount)}
                 onClick={() => addNewExpense()}
-                className='mt-3 w-full '>Add New Expense</Button>
+                className='mt-3 w-full'>Add New Expense</Button>
         </div >
     )
 }
