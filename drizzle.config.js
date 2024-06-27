@@ -18,6 +18,6 @@ export default {
     dialect: 'postgresql',
     // driver: 'pg',
     dbCredentials: {
-        url: "postgresql://expense_owner:ZmpaCEjPo69t@ep-black-art-a5s59qy9.us-east-2.aws.neon.tech/expense?sslmode=require"
+        url: "postgresql://neondb_owner:Y7NLoMhab2iC@ep-long-tooth-a5ff6i5x.us-east-2.aws.neon.tech/neondb?sslmode=require"
     }
 };
